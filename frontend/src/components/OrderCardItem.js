@@ -2,8 +2,9 @@ import React from 'react'
 
 
 const OrderCardItem = ({item, quantityMap}) => {
-  console.log("###",quantityMap)
+  // console.log("###",quantityMap)
   quantityMap = new Map(Object.entries(quantityMap));
+  // console.log("------",item[0])
   return (
     <>
         <tr>

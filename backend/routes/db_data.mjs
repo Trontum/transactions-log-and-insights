@@ -32,14 +32,27 @@ router.get("/get_current_orders",async (req,res)=>{
 router.post("/update_current_orders",async (req,res)=>{
     main();
     const data=req.body;
-    const currentOrder=new CurrentOrders(data);
-    console.log(req.body);
-    currentOrder.save()
-    .then(console.log("Current Order with Order ID: "+data.orderId+" saved to DB successfully."))
+    const existingOrder=await CurrentOrders.findOne({orderId:data.orderId});
+    if (existingOrder!==null){
+        console.log(req.body);
+        CurrentOrders.replaceOne({orderId:data.orderId},data)
+        .then(console.log("Current Order with Order ID: "+data.orderId+" updated to DB successfully.")) 
         .catch((err)=>{
-        console.log(err);
+            console.log(err);
         })
-        res.status(200);
+        return res.status(200);
+    }
+    else{
+        const currentOrder=new CurrentOrders(data);
+        console.log(req.body);
+        currentOrder.save()
+        .then(console.log("Current Order with Order ID: "+data.orderId+" saved to DB successfully."))
+            .catch((err)=>{
+            console.log(err);
+            })
+            res.status(200);
+    }
+
 });
 
 router.post("/add_order_to_db",async (req,res)=>{

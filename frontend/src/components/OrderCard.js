@@ -2,7 +2,8 @@ import React from 'react'
 import OrderCardItem from './OrderCardItem'
 import { useDispatch } from 'react-redux'
 import { addOrderToDashboard } from '../stores/DayReportSlice';
-import { removeOrder } from '../stores/OrderSlice';
+import { removeOrder, updateOrder } from '../stores/OrderSlice';
+import NewTransaction from './NewTransaction';
 
 const OrderCard = ({order}) => {
     const dispatch=useDispatch();
@@ -11,7 +12,12 @@ const OrderCard = ({order}) => {
         // console.log(dashboardState)
         dispatch(removeOrder(order))
     }
-    
+    // const handleUpdateOrder=()=>{
+    //     // <NewTransaction/>
+    //     dispatch(updateOrder(order))
+    // }
+    const items=[...new Set(order.items.map(item=>JSON.stringify(item)))].map(item=>JSON.parse(item));
+    // console.log("$$",items);
     
   return (
     <>
@@ -32,13 +38,14 @@ const OrderCard = ({order}) => {
                 <td style={{textAlign:"center", padding:"10px"}}>Item Price</td>
                 <td style={{textAlign:"center", padding:"10px"}}>Item Total</td>
             </tr>
-        {order.items.map((item,index)=>{
+        {items.map((item,index)=>{
+            // console.log(item);
             return <OrderCardItem key={index} item={item} quantityMap={order.quantityMap}/>
         })}
         </tbody>
         </table>
         <button style={{borderRadius:"5%",margin:"5px", backgroundColor:"red", borderStyle:"none", color:"white", padding:"5px"}}onClick={()=>dispatch(removeOrder(order))} >Delete</button>
-        <button style={{borderRadius:"5%",margin:"5px",backgroundColor:"orange", borderStyle:"none", color:"white", padding:"5px"}} >Update</button>
+        {/* <button style={{borderRadius:"5%",margin:"5px",backgroundColor:"orange", borderStyle:"none", color:"white", padding:"5px"}} onClick={handleUpdateOrder} >Update</button> */}
         <button style={{borderRadius:"5%",margin:"5px", backgroundColor:"green", borderStyle:"none", color:"white", padding:"5px"}} onClick={handleCompleteOrder}>Complete Order</button>
         </div>
     </div></>

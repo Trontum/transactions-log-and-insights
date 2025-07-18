@@ -85,18 +85,32 @@ const orderSlice = createSlice({
         // state.orderId+=1
         state.quantityMap=new Map();
     },
-    // updateOrder:(state,action)=>{
-    //     // console.log("###",action.payload);
-    //     const order=state.orders.find((order)=>order.orderId===action.payload.orderId);
-    //     // console.log(order);
-    //     if(order){
-    //         order.items=action.payload.items;
-    //         order.orderTotal=action.payload.orderTotal;
-    //         order.quantityMap=Object.fromEntries(action.payload.quantityMap);
-    //         order.totalItems=action.payload.totalItems;
-    //         updateCurrentOrderToDB(order);
-    //     }
-    // },
+    updateOrder:(state,action)=>{
+        // console.log("###",action.payload);
+        const order=state.orders.find((order)=>order.orderId===action.payload.orderId);
+        const currentOrderState=state.orders.filter((order)=>order.orderId!==action.payload.orderId);
+        // console.log(order);
+        // console.log("@@",state.orders);
+        state.orders=currentOrderState;
+        // console.log("----",state.orders);
+        if(order){
+            order.items=[...order.items,...state.items];
+            order.orderTotal+=state.orderTotal;
+            // console.log("###",action.payload.quantityMap);
+            const currentQuantityMap = Object.fromEntries(state.quantityMap);
+            for (const [key, value] of Object.entries(currentQuantityMap)) {
+              order.quantityMap[key] = (order.quantityMap[key] || 0)+value;
+            }
+            // order.quantityMap=action.payload.quantityMap;
+            order.totalItems+=state.totalItems;
+            state.orders.push(order);
+            updateCurrentOrderToDB(order);
+            state.items=[]
+            state.orderTotal=0
+            state.totalItems=0
+            state.quantityMap=new Map();
+        }
+    },
     removeOrder:(state,action)=>{
         // console.log(state.orders)
         const newOrders=state.orders.filter((order)=>order.orderId!==action.payload.orderId)
@@ -112,7 +126,7 @@ const orderSlice = createSlice({
 
 export default orderSlice.reducer;
 
-export const { addItem, reduceItemQuantity, increaseItemQuantity, addOrder, removeOrder, clearCart } = orderSlice.actions;
+export const { addItem, reduceItemQuantity, increaseItemQuantity, addOrder, removeOrder, updateOrder, clearCart } = orderSlice.actions;
 
 // action : {
 // payload : info about the product details

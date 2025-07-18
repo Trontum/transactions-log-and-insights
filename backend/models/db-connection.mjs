@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 let main=async()=>{
   try {
-    mongoose.connect(process.env.DB_CONNECTION_STRING);
+    mongoose.connect(process.env.DB_CONNECTION_STRING_MONGOOSE);
     console.log("connected to DB Successfully !!!");
 
   } catch(e) {
